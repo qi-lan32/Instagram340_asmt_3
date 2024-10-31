@@ -9,18 +9,36 @@ using namespace std;
 Post::Post(){};
 Post::Post(const std::string& title, const int& videoLength, const std::string& url):
         title(title), url(url), videoLength(videoLength), likes(0), timeStamp(std::chrono::steady_clock::now()){
-
 }
 //destructor
 Post::~Post() {};
+//copy constructor
+Post::Post(const Post &other)
+    :title(other.title), url(other.url), videoLength(other.videoLength), likes(0), timeStamp(std::chrono::steady_clock::now()){
+
+}
 
 // When creating a post, you may use this code to set time stamp
-auto time_stamp = std::chrono::steady_clock::now();     //TODO -- CHECK HOW TO USE https://www.freecodecamp.org/news/cpp-std-chrono-api/#:~:text=The%20answer%20is%20that%20the%20members%20of%20struct,s%20%2F%20float%20s.%20They%27re%20not%20strongly%20typed.
+auto time_stamp = std::chrono::steady_clock::now();
 
 // ------------------------------------------------------------------------------
 // Operator overloading implementation
 bool Post::operator==(const Post& otherPost) const {
     return Post::title == otherPost.title && timeStamp == otherPost.timeStamp && likes == otherPost.likes && url == otherPost.url;
+}
+//operator overloading <<
+ostream& operator<<(ostream& os, const Post& post){
+    return post.printPost(os);
+}
+//operator overloading >>
+istream& operator>>(istream& is, Post& post){
+    cout << "Enter title of your post: ";
+    is >> post.title;
+    cout << "Enter the time duration of your post: ";
+    is >> post.videoLength;
+    cout << "Enter the url of your post: ";
+    is >> post.url;
+    return is;
 }
 
 //print out edit message when user edits
@@ -28,25 +46,29 @@ void Post::editMsg() const {
     cout << "You have edited your Post." << endl;
 }
 //print post
-void Post::printPost() const {
-    cout << "Post \"" << title << "\" || " <<  videoLength << " seconds || " << likes << " likes || " << url << endl;
+ostream& Post::printPost(ostream& os) const {
+    os << "Post \"" << title << "\" || " <<  videoLength << " seconds || " << likes << " likes || " << url << endl;
+    return os;
 }
 
 //GETTERS
-const string &Post::getTitle() const {
-    return title;
-}
-
-int Post::getLikes() const {
-    return likes;
-}
-
-const string &Post::getUrl() const {
-    return url;
-}
+//const string &Post::getTitle() const {
+//    return title;
+//}
+//
+//int Post::getLikes() const {
+//    return likes;
+//}
+//
+//const string &Post::getUrl() const {
+//    return url;
+//}
 
 int Post::getVideoLength() const {
     return videoLength;
+}
+const chrono::time_point<std::chrono::steady_clock> &Post::getTimeStamp() const {
+    return timeStamp;
 }
 
 
@@ -55,7 +77,12 @@ void Post::setTitle(const string &title) {
     Post::title = title;
     cout << "You have changed your post title to \"" << title << "\"." << endl;
 }
-
-const chrono::time_point<std::chrono::steady_clock> &Post::getTimeStamp() const {
-    return timeStamp;
+void Post::setVideoLength(const int &videoLength) {
+    Post::videoLength = videoLength;
 }
+
+
+
+
+
+

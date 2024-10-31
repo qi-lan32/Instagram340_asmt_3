@@ -19,9 +19,9 @@ public:
    Node();
    Node(const ItemType& anItem);
    Node(const ItemType& anItem, Node<ItemType>* nextNodePtr);
-   void setItem(ItemType anItem);
+   void setItem(const ItemType& anItem);
    void setNext(Node<ItemType>* nextNodePtr);
-   ItemType getItem() const ;
+   ItemType getItem() const ;  //return ref of item
    Node<ItemType>* getNext() const ;
 };
 

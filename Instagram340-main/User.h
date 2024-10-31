@@ -11,14 +11,17 @@
     class User{
         private:
             std::string username, email, password, bio, profilePicture;
-            LinkedBag<std::unique_ptr<Post>> posts; // todo this stores ptrs to new post objs created
-                    // suppose to create new reel/story objs in heap -- using new;
+            LinkedBag<std::shared_ptr<Post>> posts;
 
         public:
             //constructor
             User();
             User(std::string username, std::string password, std::string email);
             User(std::string username, std::string email, std::string password, std::string bio, std::string profilePicture);
+            //copy constructure
+            User(const User& user);
+            //destructor
+            ~User();
 
             //print out profile of user
             void displayProfile() const;
@@ -26,18 +29,22 @@
             void displayAllPosts() const;
             //find and print specific post at k
             void displayKthPost(const int& k) const;
-            // Operator == overloading function prototype:
-            bool operator==(const User& otherUser) const;
+            // Operator = overloading function prototype:
+            User& operator=(const User& otherUser);
+            //remove a post at a certain index
             void removePost(const int& index);
+            //modify a post at a certain index and change its title
             void modifyPost(const int& index, const std::string& newTitle);
+            //operator << overloading
+            friend std::ostream& operator<<(std::ostream &os, const User& user);
+            //operator >> overloading
+            friend std::istream& operator>>(std::istream &is, User& user);
 
             //getter
             const std::string &getUsername() const;
+            LinkedBag<std::shared_ptr<Post>> &getPosts();
 
-            LinkedBag<std::unique_ptr<Post>> &getPosts();
-
-
-        //setter
+            //setter
             void setPassword(const std::string &password);
 
     };

@@ -10,9 +10,12 @@ int durationLimit = 60; //in seconds
 //CONSTRUCTORS
 Story::Story(){};
 Story::Story(const std::string& title, const int& videoLength, const std::string url)
-    :Post(title, videoLength, url){
-    timeTillExpiration = computeTimeToExpiration();
-}
+    :Post(title, videoLength, url){}
+//copy constructor
+Story::Story(const Story &other)
+    :Post(other){}
+//destructor
+Story::~Story(){}
 
 //METHODS
 // When displaying a story, use this to compute expected expiration time: timeToExpiration
@@ -42,7 +45,35 @@ bool Story::compareDurationLimit(const int& reelLength) {
     return reelLength <= durationLimit;
 }
 
-void Story::printPost() const {
-    cout << "Story \"" << title << "\" || " <<  videoLength << " seconds || " << likes << " likes || " << computeTimeToExpiration() << " hours till expiration || " << url << endl;
+ostream& Story::printPost(ostream& os) const {
+    os << "Story \"" << title << "\" || " <<  videoLength << " seconds || " << likes << " likes || " << computeTimeToExpiration() << " hours till expiration || " << url << endl;
+    return os;
 }
+
+//operator overloading <<
+std::ostream &operator<<(ostream& os, const Story& story) {
+    return story.printPost(os);
+}
+//operator overloading >>
+std::istream &operator>>(istream &is, Story &story) {
+    cout << "Enter the title of your story: " << endl;
+    cin >> story.title;
+    cout << "Provide the URL of your story: " << endl;
+    cin >> story.url;
+    cout << "Provide the length of your story in seconds: " << endl;
+    cin >> story.videoLength;
+    return is;
+}
+
+//operator overloading =
+Story& Story::operator=(const Story& other){
+    //call base class assignment
+    Post::operator=(other);
+    //assign inherited members
+    title = other.title;
+    url = other.title;
+    videoLength = other.videoLength;
+    return *this;
+}
+
 

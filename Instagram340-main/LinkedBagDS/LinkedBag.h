@@ -29,7 +29,7 @@ public:
 	virtual ~LinkedBag();						// Destructor should be virtual
 
 	// Assignment 2 functions -------------------------------------------
-	bool append(const ItemType& newEntry);
+    bool append(const ItemType& newEntry);
     Node<ItemType>* findKthItem(const int& indexK) const;
 	// ------------------------------------------------------------------
 	

@@ -10,16 +10,22 @@
 // It should allow clients to add users and retrieve a user from the list
 class Instagram340 {
 	private:
-		LinkedBag<std::unique_ptr<User>> users;
+		LinkedBag<std::shared_ptr<User>> users;
 
 	public:
 		Instagram340();
+        Instagram340(const Instagram340& other);
 		~Instagram340();
 
-		void createUser(const std::string& username, const std::string& email, const std::string& password,
-						const std::string& bio, const std::string& profilePicture);
+        //create a new user
+		void createUser(User& user);
+        //operator << overloading function
+        friend std::ostream& operator<<(std::ostream &os, const Instagram340 &insta340);
+        //operator = overloading function
+        Instagram340& operator=(const Instagram340& other);
 
-        std::unique_ptr<User> getUser(const int& indexK);
+        //getter
+        const std::shared_ptr<User> getSpecificUser(const int& indexK) const;
 };
 
 #endif

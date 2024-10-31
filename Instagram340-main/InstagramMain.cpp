@@ -1,5 +1,11 @@
 /*
- * TODO: Everything should work now
+ * TODO: [amst 3]
+ *      - new types of users: personal and creator
+ *      - sign up or log in
+ *      - linkedbag operator = overload
+ *      - non-trivial test case
+ *
+ *
  */
 
 #include <iostream>
@@ -46,7 +52,7 @@ void displayUserManu(User& user){
 		switch (userChoice) {
 			case 1:{
 				// TO DO: display user's profile information
-				user.displayProfile();
+                cout << user;
 				break;
 			}
 			case 2: {
@@ -63,58 +69,46 @@ void displayUserManu(User& user){
 				//        Your program should set the time stamp to current time (code provided in Post.cpp) 
 				// then create the post and add it to the user's posts
                 int choice = 0;
-                string title, url;
                 int videoLength;
+                LinkedBag<shared_ptr<Post>>& posts = user.getPosts();
 
                 cout << "Would you like to make a reel or story? (Enter 1 for reel, 2 for story)" << endl;
                 cin >> choice;
 
                 //make a reel (1) or story (2) according to user's choice
                 if(choice == 1){
-                    cout << "Enter the title of your reel: " << endl;
-                    cin >> title;
-                    cout << "Provide the URL of your reel: " << endl;
-                    cin >> url;
-                    cout << "Provide the length of your reel in seconds: " << endl;
-                    cin >> videoLength;
+                    Reel reel;
+                    cin >> reel;
 
                     //if the length of reel is longer than its duration limit, continue to ask for an appropriate length
-                    while(!Reel::compareDurationLimit(videoLength)){
+                    while(!Reel::compareDurationLimit(reel.getVideoLength())){
                         cout << "Your reel is over 90 seconds! Please keep your reel under the limit." << endl;
                         cout << "Provide the length of your reel in seconds: " << endl;
                         cin >> videoLength;
+                        reel.setVideoLength(videoLength);
                     } //check reel length
-
-//                    Reel* newReel = new Reel(title, url, videoLength); //create new reel using given info
-                    user.getPosts().append(make_unique<Reel>(title, url, videoLength));
+                    posts.append(shared_ptr<Post> (new Reel(reel)));
 
                 }else if(choice == 2){
-                    cout << "Enter the title of your story: " << endl;
-                    cin >> title;
-                    cout << "Provide the URL of your story: " << endl;
-                    cin >> url;
-                    cout << "Provide the length of your story in seconds: " << endl;
-                    cin >> videoLength;
+                    Story newStory;
+                    cin >> newStory;
 
                     //check whether the length of story is under limit, if not, keep prompting user for appropriate time
-                    while(!Story::compareDurationLimit(videoLength)){
+                    while(!Story::compareDurationLimit(newStory.getVideoLength())){
                         cout << "Your story is over 60 seconds! Please keep your story under the limit." << endl;
                         cout << "Provide the length of your story in seconds: " << endl;
                         cin >> videoLength;
+                        newStory.setVideoLength(videoLength);
                     } //check story length
-
-//                    Story* newStory = new Story(title, videoLength, url);    //create new story object
-                    user.getPosts().append(make_unique<Story>(title, videoLength, url));
+                    posts.append(shared_ptr<Post> (new Story(newStory)));
 
                 }else{
                     cout << "Invalid choice!" << endl;
                 }
-
 				break;
 			}
 			case 4:{
-				// TO DO: display all user's posts
-				//        You may re-use code from class demo
+				//display all user's posts
                 user.displayAllPosts();
 				break;
 			}
@@ -126,14 +120,13 @@ void displayUserManu(User& user){
                 // Find the Kth post, if k > Linked Bag size,
                 //    return an error message that includes the size of the Linked Bag
                 user.displayKthPost(k);
-
 				break;
 			}
 			case 6: {
                 //TO DO: ask user for index of post they want to modify and the new title
                 int index;
                 string newTitle;
-                LinkedBag<unique_ptr<Post>>& posts = user.getPosts();
+                LinkedBag<shared_ptr<Post>>& posts = user.getPosts();
 				//ask user for input on index and title
                 cout << "What is the index of the post you would like to modify? Enter: " << endl;
                 cin >> index;
@@ -144,16 +137,14 @@ void displayUserManu(User& user){
                 }else{
                     cout << "Enter the new title you would like to change to: " << endl;
                     cin >> newTitle;
-
                     user.modifyPost(index, newTitle);
                 }
-
 				break;
 			}
 			case 7: {
 				// TO DO: ask the user for the index of the post they want to delete and delete it
                 int index;
-                LinkedBag<unique_ptr<Post>>& posts = user.getPosts();
+                LinkedBag<shared_ptr<Post>>& posts = user.getPosts();
                 //ask user for input on index
                 cout << "What is the index of the post you would like to delete? Enter: " << endl;
                 cin >> index;
@@ -187,7 +178,6 @@ void displayUserManu(User& user){
 			default:
 				cout << "Invalid choice. Please try again." << endl;
 		}
-
 	} while (userChoice != 0);
 }
 
@@ -197,29 +187,16 @@ int main(){
 	// With this implementation, the application will only have one user
 	Instagram340 instagram;
     string username, email, password, bio, profilePic;
+	cout << instagram;
 
-	cout << "\n Welcome to Instagram340:" << endl;
-	// TO DO: Ask the user to enter their information to instantiate a new user object
-
-    cout << "Please enter your username: " << endl;
-    cin >> username;
-    cout << "Please enter your email: " << endl;
-    cin >> email;
-    cout << "Please enter your password: " << endl;
-    cin >> password;
-    cout << "Please enter your bio: " << endl;
-    cin >> bio;
-    cout << "Please enter your profile picture: " << endl;
-    cin >> profilePic;
-
-	// call instagram createUser function
-	// replace /*...*/ with the right parameters
-	instagram.createUser(username,email, password, bio, profilePic);
+	// Ask the user to enter their information to instantiate a new user object
+    User user;
+    cin >> user;
+    instagram.createUser(user);
 
 //	 Retrieve the user
-	unique_ptr<User> currentUser = instagram.getUser(0);
-
-    currentUser->displayProfile();
+	shared_ptr<User> currentUser = instagram.getSpecificUser(0);
+    cout << *currentUser;
 	displayUserManu(*currentUser);
 				
 	return 0;
